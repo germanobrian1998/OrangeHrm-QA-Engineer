@@ -51,7 +51,7 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: gh-pages
+          path: allure-history
 
       - name: Allure Report Action
         uses: simple-elf/allure-report-action@master
@@ -75,3 +75,5 @@ jobs:
           force_orphan: true
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
+
+# Forzando activación del work
