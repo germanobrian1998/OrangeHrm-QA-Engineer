@@ -12,11 +12,17 @@
     "baseUrl": ".",
     "paths": {
       "@pages/*": ["pages/*"],
-      "@data/*": ["data/*"],
-      "@core/*": ["core/*"],
+      "@api/*": ["api/*"],
       "@fixtures/*": ["fixtures/*"]
-    }
+    },
+    "types": ["node"]
   },
-  "include": ["**/*.ts"],
+  "include": [
+    "tests/**/*.ts",
+    "pages/**/*.ts",
+    "api/**/*.ts",
+    "fixtures/**/*.ts",
+    "playwright.config.ts"
+  ],
   "exclude": ["node_modules"]
 }

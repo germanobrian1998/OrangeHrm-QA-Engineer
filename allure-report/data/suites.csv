@@ -1,0 +1,6 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","30726","Should handle employee lifecycle without flakiness @smoke","chromium","2026-04-20","passed","2026-04-20","PIM Reliability Suite","e2e/pim.spec.ts","",""
+"","9972","Admin should see the Admin Menu @security","chromium","2026-04-20","passed","2026-04-20","Access Control - Permissions > Admin Context","e2e/access-control.spec.ts","",""
+"","8701","authenticate as admin","setup","2026-04-20","passed","2026-04-20","","auth.setup.ts","",""
+"","12166","Should edit an employee created via API @fast","chromium","2026-04-20","passed","2026-04-20","PIM Hybrid Suite","e2e/pim-hybrid.spec.ts","",""
+"","7929","Regular User should NOT see the Admin Menu @security","chromium","2026-04-20","passed","2026-04-20","Access Control - Permissions > User Context","e2e/access-control.spec.ts","",""
