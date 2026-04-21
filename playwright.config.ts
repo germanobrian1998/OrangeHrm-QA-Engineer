@@ -13,6 +13,7 @@ export default defineConfig({
 
   reporter: [
     ['html'],
+    ['line'],
     ['allure-playwright'],
     ['list'],
     ['github'],
@@ -22,7 +23,7 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'https://opensource-demo.orangehrmlive.com',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'on-first-retry',
+    video: 'retain-on-failure',
     actionTimeout: 10000,
     launchOptions: {
       slowMo: 500,
