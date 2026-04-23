@@ -10,7 +10,6 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     
-    # 🔓 Los permisos deben ir exactamente aquí, alineados con 'runs-on'
     permissions:
       contents: write
       pages: write
