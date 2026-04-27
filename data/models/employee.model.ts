@@ -3,4 +3,7 @@ export interface Employee {
   lastName: string;
   middleName?: string;
   employeeId?: string;
+  status?: 'Enabled' | 'Disabled';
+  username?: string;
+  password?: string;
 }

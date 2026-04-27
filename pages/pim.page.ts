@@ -1,56 +1,60 @@
-import test, { Page, Locator, expect } from "@playwright/test";
+// pages/pim.page.ts
+import { Page, Locator, expect,test } from "@playwright/test";
+import { BasePage } from "../core/BasePage"; // Importamos el cerebro del framework
 import { Employee } from "../data/models/employee.model";
 
-export class PIMPage {
-  private readonly page: Page;
+export class PIMPage extends BasePage { // Heredamos de BasePage
   private readonly addEmployeeBtn: Locator;
   private readonly firstNameInput: Locator;
   private readonly lastNameInput: Locator;
   private readonly saveBtn: Locator;
   private readonly employeeListMenuItem: Locator;
+  private readonly searchNameInput: Locator;
+  private readonly searchBtn: Locator;
 
   constructor(page: Page) {
-    this.page = page;
+    super(page); // Inicializamos la clase base
     this.employeeListMenuItem = page.getByRole("link", { name: "PIM" });
     this.addEmployeeBtn = page.getByRole("button", { name: "Add" });
     this.firstNameInput = page.getByPlaceholder("First Name");
     this.lastNameInput = page.getByPlaceholder("Last Name");
     this.saveBtn = page.getByRole("button", { name: "Save" });
+    this.searchNameInput = page.getByPlaceholder('Type for hints...').first();
+    this.searchBtn = page.getByRole('button', { name: 'Search' });
   }
 
   async navigateToPIM() {
-    await this.employeeListMenuItem.click();
+    await this.page.goto('/web/index.php/pim/viewEmployeeList');
   }
 
   async createEmployee(employee: Employee) {
-    await this.addEmployeeBtn.click();
-    await this.firstNameInput.fill(employee.firstName);
-    await this.lastNameInput.fill(employee.lastName);
-    await this.saveBtn.click();
+    await this.clickElement(this.addEmployeeBtn, "Add Employee Button");
+    
+    await this.fillInput(this.firstNameInput, employee.firstName, "First Name");
+    await this.fillInput(this.lastNameInput, employee.lastName, "Last Name");
+    
+    await this.clickElement(this.saveBtn, "Save Button");
 
-    // ESPERA CRÍTICA: Esperar a que el guardado termine y la URL cambie
-    // OrangeHRM suele ir a 'viewPersonalDetails' tras guardar
-    await this.page.waitForURL(/viewPersonalDetails/, { timeout: 15000 });
+    // 💡 MEJORA: En lugar de solo waitForURL, esperamos que la URL contenga el patrón
+    // y usamos un estado de carga más permisivo ('commit' en lugar de 'load')
+    await test.step('Wait for profile redirection', async () => {
+        await this.page.waitForURL(/viewPersonalDetails/, { 
+            timeout: 20000, 
+            waitUntil: 'commit' // Se dispara en cuanto el servidor responde la redirección
+        });
+    });
   }
 
-  async verifyEmployeeExists(fullName: string) {
-    const [firstName, lastName] = fullName.split(' '); // Separamos el nombre del apellido
+  async searchAndVerifyEmployee(firstName: string, lastName: string) {
+    await this.clickElement(this.page.getByRole('link', { name: 'Employee List' }), "Employee List Link");
+    await this.fillInput(this.searchNameInput, firstName, "Search Input");
+    await this.clickElement(this.searchBtn, "Search Button");
 
-    await this.page.getByRole('link', { name: 'Employee List' }).click();
-    
-    const employeeNameInput = this.page.getByPlaceholder('Type for hints...').first();
-    await employeeNameInput.fill(firstName); // Buscamos solo por el primer nombre
-    await this.page.getByRole('button', { name: 'Search' }).click();
-
-    // 💡 LA CLAVE: Buscamos la fila que contiene el nombre
-    // Usamos el texto del nombre para encontrar la celda específica
     const firstNameCell = this.page.getByRole('cell', { name: firstName }).first();
     const lastNameCell = this.page.getByRole('cell', { name: lastName }).first();
 
-    await test.step('Validate employee in table cells', async () => {
-        // Validamos que ambas celdas existan por separado
-        await expect(firstNameCell).toBeVisible({ timeout: 10000 });
-        await expect(lastNameCell).toBeVisible({ timeout: 10000 });
-    });
-}
+    // Las validaciones finales (expect) se mantienen explícitas
+    await expect(firstNameCell).toBeVisible({ timeout: 10000 });
+    await expect(lastNameCell).toBeVisible({ timeout: 10000 });
+  }
 }
