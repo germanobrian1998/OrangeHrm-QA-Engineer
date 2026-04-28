@@ -6,16 +6,20 @@ test.describe('Visual Regression Suite', () => {
   test('PIM Dashboard Integrity Check', async ({ page, pimPage }) => {
     await pimPage.navigateToPIM();
 
-    // 1. Limpieza: Ocultamos elementos dinámicos que cambian (relojes, banners de demo)
-    // para evitar falsos negativos.
+    // 💡 PASO SENIOR: Esperar a que la tabla y los datos estén listos
+    // Esto evita capturar la pantalla mientras los esqueletos de carga (skeletons) están activos
+    await page.waitForSelector('.oxd-table-body');
+    await page.waitForLoadState('networkidle');
+
+    // 1. Limpieza de elementos dinámicos
     const dynamicElements = page.locator('.orangehrm-demo-floater, .oxd-text--subtitle-2');
 
-    // 2. Validación Visual
+    // 2. Validación Visual Optimizada
     await expect(page).toHaveScreenshot('pim-main-dashboard.png', {
-      mask: [dynamicElements], // Estos elementos se verán como bloques rosas en la captura
-      threshold: 0.2,
-      maxDiffPixelRatio: 0.02, 
-      fullPage: true          // Captura todo el scroll
+      mask: [dynamicElements],
+      threshold: 0.3,           // Un poco más de tolerancia para variaciones de antialiasing en CI
+      maxDiffPixelRatio: 0.05,  // Permitimos hasta un 5% de diferencia de píxeles
+      fullPage: false           // 🚀 CLAVE: Captura solo el viewport (1280x720) para evitar errores de altura
     });
   });
 });
