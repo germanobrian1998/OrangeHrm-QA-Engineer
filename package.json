@@ -4,7 +4,8 @@
   "description": "Enterprise Playwright Framework with TypeScript",
   "main": "index.js",
   "scripts": {
-    "clean": "rimraf playwright-report test-results",
+    "clean": "rimraf playwright-report test-results allure-results allure-report",
+    "test:clean": "npm run clean && npx playwright test",
     "test": "playwright test",
     "test:chromium": "playwright test --project=chromium",
     "test:api": "playwright test --grep @api",

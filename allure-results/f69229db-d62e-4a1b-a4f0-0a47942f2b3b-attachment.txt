@@ -1,1 +1,0 @@
-A snapshot doesn't exist at /app/tests/e2e/visual.spec.ts-snapshots/pim-main-dashboard-chromium-linux.png, writing actual.

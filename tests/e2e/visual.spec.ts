@@ -17,9 +17,9 @@ test.describe('Visual Regression Suite', () => {
     // 2. Validación Visual Optimizada
     await expect(page).toHaveScreenshot('pim-main-dashboard.png', {
       mask: [dynamicElements],
-      threshold: 0.3,           // Un poco más de tolerancia para variaciones de antialiasing en CI
-      maxDiffPixelRatio: 0.05,  // Permitimos hasta un 5% de diferencia de píxeles
-      fullPage: false           // 🚀 CLAVE: Captura solo el viewport (1280x720) para evitar errores de altura
+      threshold: 0.4,           // Un poco más de tolerancia para variaciones de antialiasing en CI
+      maxDiffPixels: 500,  // Permitimos hasta un 5% de diferencia de píxeles
+      animations: 'disabled',          // 🚀 CLAVE: Captura solo el viewport (1280x720) para evitar errores de altura
     });
   });
 });

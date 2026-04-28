@@ -1,1 +1,0 @@
-/app/tests/e2e/visual.spec.ts-snapshots/pim-main-dashboard-chromium-linux.png is re-generated, writing actual.

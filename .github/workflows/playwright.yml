@@ -19,12 +19,13 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    # 1. Construimos tu imagen personalizada (la que tiene BasePage, Factories, etc.)
     - name: Build Docker Image
       run: docker build -t orangehrm-qa .
 
-    # 2. Corremos los tests dentro del contenedor
-    # Usamos -v para sacar los resultados del contenedor al runner de GitHub
+    # Creamos la carpeta antes para evitar problemas de permisos de root
+    - name: Prepare allure-results
+      run: mkdir -p allure-results
+
     - name: Run Playwright tests in Docker
       run: |
         docker run --rm \
@@ -32,16 +33,19 @@ jobs:
         orangehrm-qa npx playwright test --workers=1
       continue-on-error: true
 
-    # 3. Traemos el historial de reportes previos (para ver las gráficas de tendencia)
+    # 💡 FIX: Cambiar permisos para que el runner pueda leer los resultados generados por Docker
+    - name: Fix permissions
+      if: always()
+      run: sudo chown -R $USER:$USER allure-results
+
     - name: Get Allure history
       uses: actions/checkout@v4
       if: always()
       continue-on-error: true
       with:
         ref: gh-pages
-        path: allure-history
+        path: gh-pages # Se recomienda llamarlo igual que la rama para evitar confusiones
 
-    # 4. Generamos el reporte estático de Allure
     - name: Allure Report Action
       uses: simple-elf/allure-report-action@master
       if: always()
@@ -50,11 +54,10 @@ jobs:
         allure_history: allure-history
         keep_reports: 20
 
-    # 5. Publicamos en GitHub Pages
     - name: Deploy report to Github Pages
       if: always()
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: allure-report
+        publish_dir: allure-history # 💡 IMPORTANTE: Publicar la carpeta que contiene el historial acumulado
         publish_branch: gh-pages
